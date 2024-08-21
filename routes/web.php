@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\Admin\TeamController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,4 +17,6 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     });
+    Route::get('/admin/teams', [TeamController::class, 'index'])->name('admin.team.index');
 });
+

@@ -7,3 +7,13 @@ admin@example.com
 password
 
 php artisan make:model Admin
+
+# use-inertia
+composer require inertiajs/inertia-laravel
+npm install @inertiajs/vue3 @vitejs/plugin-vue
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init
+npm run dev
+or
+npm run build
+
