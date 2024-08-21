@@ -1,0 +1,9 @@
+php artisan make:migration create_admins_table --create=admins
+php artisan migrate
+php artisan make:seeder AdminsTableSeeder
+php artisan db:seed
+
+admin@example.com
+password
+
+php artisan make:model Admin
