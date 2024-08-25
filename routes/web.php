@@ -16,10 +16,16 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 
 Route::middleware(['auth:admin'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/', [TeamController::class, 'index'])->name('top');
-        Route::get('/teams', [TeamController::class, 'index'])->name('team.index');
+        Route::get('/', [TeamController::class, 'top'])->name('top');
         Route::get('/setting', [AdminController::class, 'edit'])->name('setting');
         Route::post('/setting', [AdminController::class, 'update'])->name('setting.update');
+        Route::prefix('teams')->name('teams.')->group(function () {
+            Route::get('/', [TeamController::class, 'index'])->name('index');
+            Route::get('/create', [TeamController::class, 'create'])->name('create');
+            Route::post('/', [TeamController::class, 'store'])->name('store');
+            Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
+            Route::put('/{team}', [TeamController::class, 'update'])->name('update');
+            Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+        });
     });
 });
-

@@ -18,3 +18,12 @@ or
 npm run build
 
 php artisan inertia:middleware
+
+# toto-schedule
+composer require imangazaliev/didom
+php artisan make:migration create_teams_table --create=teams
+php artisan make:migration create_games_table --create=games
+php artisan make:migration create_schedules_table --create=schedules
+php artisan migrate
+php artisan db:seed --class="TeamsTableSeeder"
+
