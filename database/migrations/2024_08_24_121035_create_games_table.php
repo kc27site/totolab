@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('home_team_id');
             $table->unsignedBigInteger('away_team_id');
             $table->integer('no');
-            $table->smallInteger('result');
+            $table->smallInteger('result')->nullable();
             $table->softDeletes(); 
             $table->timestamps();
             $table->index('schedule_id');

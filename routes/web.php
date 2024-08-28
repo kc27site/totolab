@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\RedirectIfNotAdmin;
@@ -26,6 +27,14 @@ Route::middleware(['auth:admin'])->group(function () {
             Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
             Route::put('/{team}', [TeamController::class, 'update'])->name('update');
             Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+        });
+        Route::prefix('schedules')->name('schedules.')->group(function () {
+            Route::get('/', [ScheduleController::class, 'index'])->name('index');
+            Route::get('/create', [ScheduleController::class, 'create'])->name('create');
+            Route::post('/', [ScheduleController::class, 'store'])->name('store');
+            Route::get('/{schedule}/edit', [ScheduleController::class, 'edit'])->name('edit');
+            Route::post('/import', [ScheduleController::class, 'import'])->name('import');
+            Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('destroy');
         });
     });
 });
