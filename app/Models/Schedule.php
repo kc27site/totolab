@@ -23,6 +23,11 @@ class Schedule extends Model
         return $this->hasMany(Game::class, 'schedule_id');
     }
 
+    public function predictions()
+    {
+        return $this->hasMany(Prediction::class, 'schedule_id');
+    }
+
     public function getTypeJpAttribute()
     {
         return ScheduleType::getDescription($this->type);

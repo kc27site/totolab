@@ -27,3 +27,7 @@ php artisan make:migration create_schedules_table --create=schedules
 php artisan migrate
 php artisan db:seed --class="TeamsTableSeeder"
 
+# game-prediction
+php artisan make:migration create_predictions_table --create=predictions
+
+

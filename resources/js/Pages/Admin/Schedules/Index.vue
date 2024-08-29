@@ -67,6 +67,12 @@
                                 >
                                     Edit
                                 </Link>
+                                <Link
+                                    :href="'/admin/predictions/' + schedule.no"
+                                    class="border border-purple-500 text-purple-700 hover:bg-purple-100 font-bold py-2 px-4 rounded predict-btn"
+                                >
+                                    Predict
+                                </Link>
                             </td>
                         </tr>
                     </tbody>
@@ -92,5 +98,8 @@ export default {
 <style scoped>
 tr {
     height: 50px;
+}
+.predict-btn {
+    margin-left: 8px;
 }
 </style>

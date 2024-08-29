@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\Admin\PredictionController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\RedirectIfNotAdmin;
@@ -35,6 +36,10 @@ Route::middleware(['auth:admin'])->group(function () {
             Route::get('/{schedule}/edit', [ScheduleController::class, 'edit'])->name('edit');
             Route::post('/import', [ScheduleController::class, 'import'])->name('import');
             Route::delete('/{schedule}', [ScheduleController::class, 'destroy'])->name('destroy');
+        });
+        Route::prefix('predictions')->name('predictions.')->group(function () {
+            Route::get('/{schedule_no}', [PredictionController::class, 'edit'])->name('edit');
+            Route::post('/', [PredictionController::class, 'update'])->name('update');
         });
     });
 });

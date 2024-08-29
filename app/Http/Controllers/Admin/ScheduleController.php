@@ -168,6 +168,7 @@ class ScheduleController extends Controller
     public function destroy(Schedule $schedule)
     {
         $schedule->games()->delete();
+        $schedule->predictions()->delete();
         $schedule->delete();
 
         return redirect()->route('admin.schedules.index')->with('success', 'Schedule and related games deleted successfully.');
