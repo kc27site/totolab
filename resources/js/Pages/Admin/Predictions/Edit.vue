@@ -173,6 +173,9 @@ export default {
         // };
         const submitPredictions = async () => {
             try {
+                const token = document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content");
                 const scheduleId = props.schedules[activeTab.value].id;
                 const data = [];
 
@@ -192,7 +195,11 @@ export default {
                     });
                 }
 
-                await axios.post("/admin/predictions", data);
+                await axios.post("/admin/predictions", data, {
+                    headers: {
+                        "X-CSRF-TOKEN": token,
+                    },
+                });
                 console.log("Predictions saved successfully");
                 successMsg = "Predictions saved successfully";
             } catch (error) {
