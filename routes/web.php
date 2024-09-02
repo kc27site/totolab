@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\PredictionController;
 use App\Http\Controllers\Admin\TeamController;
@@ -40,6 +41,15 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::prefix('predictions')->name('predictions.')->group(function () {
             Route::get('/{schedule_no}', [PredictionController::class, 'edit'])->name('edit');
             Route::post('/', [PredictionController::class, 'update'])->name('update');
+        });
+        Route::prefix('blogs')->name('blogs.')->group(function () {
+            Route::get('/', [BlogController::class, 'index'])->name('index');
+            Route::get('/create', [BlogController::class, 'create'])->name('create');
+            Route::post('/', [BlogController::class, 'store'])->name('store');
+            Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
+            Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
+            Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('destroy');
+            Route::post('/{blog}/sections', [BlogController::class, 'updateSections'])->name('sections.update');
         });
     });
 });

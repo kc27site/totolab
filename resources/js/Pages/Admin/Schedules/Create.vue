@@ -193,8 +193,8 @@
 <script>
 import { useForm } from "@inertiajs/vue3";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import axios from "axios";
 import { ref } from "vue";
+
 export default {
     components: {
         AdminLayout,

@@ -23,6 +23,15 @@
                     Schedules
                 </Link>
                 <Link
+                    href="/admin/blogs"
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                    :class="{
+                        'bg-gray-700': $page.url.startsWith('/admin/blogs'),
+                    }"
+                >
+                    Blogs
+                </Link>
+                <Link
                     href="/admin/setting"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
                     :class="{
