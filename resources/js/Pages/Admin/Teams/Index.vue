@@ -53,7 +53,7 @@ export default {
         AdminLayout,
     },
     props: {
-        groupedTeams: Array,
+        groupedTeams: Object,
     },
     methods: {
         editTeam(teamId) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\BlogStatus;
+use App\Enums\ScheduleType;
 use App\Http\Controllers\Controller;
 use App\Models\Schedule;
 use App\Models\Team;
@@ -66,16 +67,19 @@ class BlogController extends Controller
             $blog->save();
         });
 
-        // リダイレクトして成功メッセージを表示
         return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
 
-    // 編集画面
     public function edit(Blog $blog)
     {
+        $blog->load('sections', 'schedules', 'schedules.games');
+        $teams = Team::pluck('name', 'id');
         return Inertia::render('Admin/Blogs/Edit', [
             'blog' => $blog,
             'initialSections' => $blog->sections,
+            'schedules' => $blog->schedules,
+            'teams' => $teams,
+            'scheduleTypes'=> ScheduleType::getAll(),
         ]);
     }
 
@@ -105,26 +109,24 @@ class BlogController extends Controller
     {
         DB::transaction(function () use ($request, $blog) {
             $sectionsData = $request->input('sections', []);
-
-            // セクションの処理
             $existingSectionIds = $blog->sections()->pluck('id')->toArray();
-
             foreach ($sectionsData as $sectionData) {
                 if (isset($sectionData['id'])) {
-                    // 更新処理
                     $section = Section::find($sectionData['id']);
                     $section->update([
                         'type' => $sectionData['type'],
                         'content' => $sectionData['content'],
+                        'game_id' => $sectionData['game_id'] ?? null,
+                        'schedule_id' => $sectionData['schedule_id'] ?? null,
                         'position' => $sectionData['position'],
                     ]);
-                    // 処理済みのIDを配列から削除
                     $existingSectionIds = array_diff($existingSectionIds, [$section->id]);
                 } else {
-                    // 新規作成
                     $blog->sections()->create([
                         'type' => $sectionData['type'],
                         'content' => $sectionData['content'],
+                        'game_id' => $sectionData['game_id'] ?? null,
+                        'schedule_id' => $sectionData['schedule_id'] ?? null,
                         'position' => $sectionData['position'],
                     ]);
                 }

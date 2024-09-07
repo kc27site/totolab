@@ -16,8 +16,10 @@ class UpdateSectionsRequest extends FormRequest
         return [
             'sections' => 'required|array',
             'sections.*.id' => 'nullable|integer|exists:sections,id',
-            'sections.*.type' => 'required|integer|in:1,2',
-            'sections.*.content' => 'required|string',
+            'sections.*.type' => 'required|integer|in:1,2,3,4,5',
+            'sections.*.content' => 'nullable|string',
+            'sections.*.game_id' => 'nullable|integer',
+            'sections.*.schedule_id' => 'nullable|integer',
             'sections.*.position' => 'required|integer',
         ];
     }

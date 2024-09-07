@@ -98,7 +98,7 @@
                         for="status"
                         class="block text-sm font-medium text-gray-700"
                     >
-                        released_at
+                        Released_at
                     </label>
                     <div>{{ blog.released_at }}</div>
                 </div>
@@ -113,36 +113,76 @@
 
             <div class="mt-4">
                 <h2 class="text-xl font-semibold mb-4">Edit Sections</h2>
-                <div
-                    v-for="(section, index) in sections"
-                    :key="index"
-                    class="relative item-box"
-                >
-                    <div v-if="section.type === 1" class="mb-2">
-                        <input
-                            v-model="section.content"
-                            type="text"
-                            class="block w-full border-gray-300 rounded"
-                            placeholder="Enter heading"
-                        />
-                    </div>
-                    <div v-else-if="section.type === 2" class="mb-2">
-                        <textarea
-                            v-model="section.content"
-                            rows="4"
-                            class="block w-full border-gray-300 rounded"
-                            placeholder="Enter text content"
-                        ></textarea>
-                    </div>
-                    <button
-                        @click="removeSection(index)"
-                        class="absolute right-0 top-0 text-red-600 remove-btn"
+                <VueDraggable v-model="sections">
+                    <div
+                        v-for="(section, index) in sections"
+                        :key="index"
+                        class="relative item-box"
                     >
-                        ×
-                    </button>
-                </div>
+                        <div v-if="section.type === 1" class="mb-2">
+                            <input
+                                v-model="section.content"
+                                type="text"
+                                class="block w-full border-gray-300 rounded"
+                                placeholder="Enter heading"
+                            />
+                        </div>
+                        <div v-else-if="section.type === 2" class="mb-2">
+                            <textarea
+                                v-model="section.content"
+                                rows="4"
+                                class="block w-full border-gray-300 rounded"
+                                placeholder="Enter text content"
+                            ></textarea>
+                        </div>
+                        <div v-else-if="section.type === 3" class="mb-2">
+                            <select
+                                v-model="section.game_id"
+                                class="block border-gray-300 rounded"
+                            >
+                                <optgroup
+                                    v-for="schedule in schedules"
+                                    :key="schedule.id"
+                                    :label="scheduleTypes[schedule.type]"
+                                >
+                                    <option
+                                        v-for="game in schedule.games"
+                                        :key="game.id"
+                                        :value="game.id"
+                                    >
+                                        {{ teams[game.home_team_id] }} ×
+                                        {{ teams[game.away_team_id] }}
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div v-else-if="section.type === 4" class="mb-2">
+                            <select
+                                v-model="section.schedule_id"
+                                class="block border-gray-300 rounded"
+                            >
+                                <option
+                                    v-for="schedule in schedules"
+                                    :value="schedule.id"
+                                    :key="schedule.id"
+                                >
+                                    {{
+                                        schedule.no +
+                                        "回 " +
+                                        scheduleTypes[schedule.type]
+                                    }}
+                                </option>
+                            </select>
+                        </div>
+                        <button
+                            @click="removeSection(index)"
+                            class="absolute right-0 top-0 text-red-600 remove-btn"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </VueDraggable>
 
-                <!-- セクション追加ボタン -->
                 <div class="flex items-center add-items">
                     <button
                         @click="addSection(1)"
@@ -156,6 +196,18 @@
                     >
                         Text
                     </button>
+                    <button
+                        @click="addSection(3)"
+                        class="border border-gray-500 text-gray-700 hover:bg-gray-100 font-bold py-1 px-1 rounded"
+                    >
+                        Game
+                    </button>
+                    <button
+                        @click="addSection(4)"
+                        class="border border-gray-500 text-gray-700 hover:bg-gray-100 font-bold py-1 px-1 rounded"
+                    >
+                        Schedule
+                    </button>
                 </div>
 
                 <div class="mt-6">
@@ -167,6 +219,15 @@
                     </button>
                 </div>
             </div>
+            <ul v-for="schedule in schedules" :key="schedule.id" class="mt-6">
+                {{
+                    scheduleTypes[schedule.type]
+                }}
+                <li v-for="game in schedule.games" :key="game.id">
+                    {{ teams[game.home_team_id] }} ×
+                    {{ teams[game.away_team_id] }}
+                </li>
+            </ul>
         </div>
     </AdminLayout>
 </template>
@@ -175,14 +236,19 @@
 import { ref } from "vue";
 import { useForm, router } from "@inertiajs/vue3";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { VueDraggable } from "vue-draggable-plus";
 
 export default {
     components: {
         AdminLayout,
+        VueDraggable,
     },
     props: {
         blog: Object,
         initialSections: Object,
+        schedules: Object,
+        teams: Object,
+        scheduleTypes: Object,
     },
     setup(props) {
         const form = useForm({
@@ -198,6 +264,8 @@ export default {
                 id: section.id || null,
                 type: section.type,
                 content: section.content || "",
+                game_id: section.game_id || null,
+                schedule_id: section.schedule_id || null,
                 position: section.position,
             }))
         );
@@ -207,6 +275,8 @@ export default {
                 id: null,
                 type,
                 content: "",
+                game_id: null,
+                schedule_id: null,
                 position: sections.value.length + 1,
             });
         };
@@ -222,15 +292,21 @@ export default {
 
         const saveSections = async () => {
             const filteredSections = sections.value.filter(
-                (section) => section.content.trim() !== ""
+                (section) =>
+                    section.content.trim() !== "" ||
+                    section.game_id ||
+                    section.schedule_id
             );
 
             const data = filteredSections.map((section, index) => ({
                 id: section.id,
                 type: section.type,
                 content: section.content,
+                game_id: section.game_id,
+                schedule_id: section.schedule_id,
                 position: index + 1,
             }));
+            console.log(data);
             try {
                 await axios.post(`/admin/blogs/${props.blog.id}/sections`, {
                     sections: data,
