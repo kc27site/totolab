@@ -28,9 +28,8 @@ class TeamController extends Controller
             ->orderBy('id', 'asc')
             ->get()
             ->groupBy('category_jp');
-
         return Inertia::render('Admin/Teams/Index', [
-            'groupedTeams' => $teams
+            'groupedTeams' => $teams,
         ]);
     }
 

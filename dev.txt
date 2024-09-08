@@ -33,3 +33,5 @@ php artisan make:migration create_predictions_table --create=predictions
 # blog
 php artisan make:migration create_blogs_table --create=blogs
 php artisan make:migration create_sections_table --create=sections
+
+

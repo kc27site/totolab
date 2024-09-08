@@ -40,4 +40,9 @@ class Blog extends Model
     {
         return BlogStatus::getDescription($this->status);
     }
+
+    public function scopeReleased($query)
+    {
+        $query->where('status', BlogStatus::RELEASED);
+    }
 }
