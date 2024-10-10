@@ -1,6 +1,6 @@
 <template>
     <header>
-        <h1>totolab</h1>
+        <h1><Link href="/">totolab</Link></h1>
     </header>
 
     <slot></slot>
@@ -29,7 +29,7 @@ h1 {
 }
 footer {
     background-color: #e6e6fa;
-    color: #333333;
+    color: gray;
     text-align: center;
     padding: 20px;
     width: 100%;

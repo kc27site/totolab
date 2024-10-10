@@ -6,8 +6,12 @@
                     v-for="blog in blogs"
                     :key="blog.id"
                     class="p-4 bg-white rounded shadow"
+                    @click="goToArticle(blog.no)"
                 >
-                    {{ blog }}
+                    <div class="title">{{ blog.title }}</div>
+                    <span class="released_at">{{
+                        $dateFns.format(blog.released_at, "yyyy.MM.dd")
+                    }}</span>
                 </li>
             </ul>
         </div>
@@ -16,6 +20,8 @@
 
 <script>
 import FrontLayout from "@/Layouts/FrontLayout.vue";
+import { router } from "@inertiajs/vue3";
+
 export default {
     components: {
         FrontLayout,
@@ -23,7 +29,24 @@ export default {
     props: {
         blogs: Object,
     },
+    methods: {
+        goToArticle(blog_no) {
+            router.visit(`/article/${blog_no}`);
+        },
+    },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+li {
+    cursor: pointer;
+}
+.title {
+    font-size: 17px;
+    font-weight: bold;
+}
+.released_at {
+    font-size: 13px;
+    color: gray;
+}
+</style>

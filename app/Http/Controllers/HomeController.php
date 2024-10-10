@@ -33,15 +33,22 @@ class HomeController extends Controller
         ]);
     }
 
-    public function create()
+    public function article($no)
     {
-        $schedule_no_list = Schedule::select('no')
-            ->orderByDesc('no')
-            ->get()
-            ->pluck('no')
-            ->unique();
-        return Inertia::render('Admin/Blogs/Create', [
-            'schedule_no_list' => $schedule_no_list
+        $blog = Blog::released()
+            ->where('no', $no)
+            ->first();
+        if (!$blog) {
+            abort(404);
+        }
+        $past_blogs = Blog::released()
+            ->where('no', '<>', $no)
+            ->orderBy('released_at', 'desc')
+            ->limit(10)
+            ->get();
+        return Inertia::render('Front/Article', [
+            'blog' => $blog,
+            'past_blogs' => $past_blogs,
         ]);
     }
 

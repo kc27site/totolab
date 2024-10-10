@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\RedirectIfNotAdmin;
 
 Route::get('/', [HomeController::class, 'index'])->name('top');
+Route::get('/article/{no}', [HomeController::class, 'article'])->name('article');
+
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
