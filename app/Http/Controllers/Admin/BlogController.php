@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Storage;
 
 class BlogController extends Controller
 {
@@ -74,6 +75,7 @@ class BlogController extends Controller
     {
         $blog->load('sections', 'schedules', 'schedules.games');
         $teams = Team::pluck('name', 'id');
+
         return Inertia::render('Admin/Blogs/Edit', [
             'blog' => $blog,
             'initialSections' => $blog->sections,
@@ -118,6 +120,7 @@ class BlogController extends Controller
                         'content' => $sectionData['content'],
                         'game_id' => $sectionData['game_id'] ?? null,
                         'schedule_id' => $sectionData['schedule_id'] ?? null,
+                        'image_url' => $sectionData['image_url'] ?? null,
                         'position' => $sectionData['position'],
                     ]);
                     $existingSectionIds = array_diff($existingSectionIds, [$section->id]);
@@ -127,8 +130,21 @@ class BlogController extends Controller
                         'content' => $sectionData['content'],
                         'game_id' => $sectionData['game_id'] ?? null,
                         'schedule_id' => $sectionData['schedule_id'] ?? null,
+                        'image_url' => $sectionData['image_url'] ?? null,
                         'position' => $sectionData['position'],
                     ]);
+                }
+            }
+
+            // 画像を削除
+            $delete_sections = Section::whereIn('id', $existingSectionIds)->get();
+            foreach ($delete_sections as $section) {
+                if ($section->imae_url) {
+                    $path = parse_url($section->image_url, PHP_URL_PATH);
+                    $path = ltrim($path, '/');
+                    if (Storage::disk('s3')->exists($path)) {
+                        Storage::disk('s3')->delete($path);
+                    }                    
                 }
             }
 
@@ -147,5 +163,26 @@ class BlogController extends Controller
             return redirect()->route('admin.blogs.index')->with('success', 'Blog deleted successfully.');
         }
         return redirect()->back()->with('error', 'status is not CLOSED.');
+    }
+
+    public function uploadImage(Request $request, Blog $blog)
+    {
+        // logger($request);
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error($e->errors());
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+        if ($request->file('image')) {
+            $path = $request->file('image')->store('blog-images', 's3');
+            $url = Storage::disk('s3')->url($path);
+            // logger($url);
+            return response()->json(['url' => $url]);
+        }
+
+        return response()->json(['error' => 'Image upload failed'], 400);
     }
 }

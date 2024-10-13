@@ -20,6 +20,7 @@ class UpdateSectionsRequest extends FormRequest
             'sections.*.content' => 'nullable|string',
             'sections.*.game_id' => 'nullable|integer',
             'sections.*.schedule_id' => 'nullable|integer',
+            'sections.*.image_url' => 'nullable|string',
             'sections.*.position' => 'required|integer',
         ];
     }

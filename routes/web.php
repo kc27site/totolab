@@ -51,6 +51,7 @@ Route::middleware(['auth:admin'])->group(function () {
             Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
             Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('destroy');
             Route::post('/{blog}/sections', [BlogController::class, 'updateSections'])->name('sections.update');
+            Route::post('/{blog}/upload-image', [BlogController::class, 'uploadImage'])->name('image.upload');
         });
     });
 });

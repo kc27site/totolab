@@ -174,6 +174,20 @@
                                 </option>
                             </select>
                         </div>
+                        <div v-else-if="section.type === 5" class="mb-2">
+                            <input
+                                type="file"
+                                @change="uploadImageToSection($event, section)"
+                                accept="image/*"
+                                class="mb-2"
+                            />
+                            <img
+                                v-if="section.image_url"
+                                :src="section.image_url"
+                                alt="Uploaded Image"
+                                width="100%"
+                            />
+                        </div>
                         <button
                             @click="removeSection(index)"
                             class="absolute right-0 top-0 text-red-600 remove-btn"
@@ -207,6 +221,12 @@
                         class="border border-gray-500 text-gray-700 hover:bg-gray-100 font-bold py-1 px-1 rounded"
                     >
                         Schedule
+                    </button>
+                    <button
+                        @click="addSection(5)"
+                        class="border border-gray-500 text-gray-700 hover:bg-gray-100 font-bold py-1 px-1 rounded"
+                    >
+                        Image
                     </button>
                 </div>
 
@@ -266,6 +286,7 @@ export default {
                 content: section.content || "",
                 game_id: section.game_id || null,
                 schedule_id: section.schedule_id || null,
+                image_url: section.image_url || null,
                 position: section.position,
             }))
         );
@@ -277,6 +298,7 @@ export default {
                 content: "",
                 game_id: null,
                 schedule_id: null,
+                image_url: null,
                 position: sections.value.length + 1,
             });
         };
@@ -290,12 +312,38 @@ export default {
             }
         };
 
+        const uploadImageToSection = async (event, section) => {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await axios.post(
+                    `/admin/blogs/${props.blog.id}/upload-image`,
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                console.log(response.data);
+                section.image_url = response.data.url;
+            } catch (error) {
+                console.error("Image upload failed:", error);
+            }
+        };
+
         const saveSections = async () => {
             const filteredSections = sections.value.filter(
                 (section) =>
                     section.content.trim() !== "" ||
                     section.game_id ||
-                    section.schedule_id
+                    section.schedule_id ||
+                    section.image_url
             );
 
             const data = filteredSections.map((section, index) => ({
@@ -304,6 +352,7 @@ export default {
                 content: section.content,
                 game_id: section.game_id,
                 schedule_id: section.schedule_id,
+                image_url: section.image_url,
                 position: index + 1,
             }));
             console.log(data);
@@ -344,6 +393,7 @@ export default {
             addSection,
             removeSection,
             saveSections,
+            uploadImageToSection,
         };
     },
 };
